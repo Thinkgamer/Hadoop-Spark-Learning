@@ -24,10 +24,10 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 public class Step4 {
 	
-	public static class Step4_Map extends Mapper<LongWritable, Text, LongWritable, Text>{
+	public static class Step4_Map extends Mapper<LongWritable, Text, Text, Text>{
 
 		String filename;
-		static LongWritable k1 =new LongWritable();
+		static Text k1 =new Text();
 		static Text value1 = new Text();
 		
 		private final static Map<Integer, List<Coocurence>> coocurenceMatrix = 	new HashMap<Integer, List<Coocurence>>();
@@ -44,32 +44,33 @@ public class Step4 {
 		protected void map(LongWritable key, Text value, Context context)throws IOException, InterruptedException {
 			// TODO Auto-generated method stub
 			String[] arrs = bookRecommend.DELIMITER.split(value.toString());
+//			System.out.println(value.toString() + "==================");
 
 			String [] v1 = arrs[0].split(":");
 			String [] v2 = arrs[1].split(":");
 			
-			if(v1.length>1)  //数据来自评分矩阵
+			if(v1.length>1)  //数据来自同现矩阵
 			{
+//				System.out.println(value.toString()+"++++++++++++++++++++++++++==");
 				int itemID1 = Integer.parseInt(v1[0]);
 				int itemID2 = Integer.parseInt(v1[1]);
 				int num = Integer.parseInt(arrs[1]);
 				
 				List list = null;
 				if(!coocurenceMatrix.containsKey(itemID1)){
-					list = new ArrayList<Coocurence>();
+					list = new ArrayList();
 				}else{
 					list = coocurenceMatrix.get(itemID1 );
 				}
 				list.add(new Coocurence(itemID1, itemID2, num) );
 				coocurenceMatrix.put(itemID1, list);
 			}
-			
-			if(v2.length>1) //数据来自同现矩阵
+			if(v2.length>1) //数据来自评分矩阵
 			{
+				System.out.println(value.toString()+"-------------------------------");
 				int itemID = Integer.parseInt(arrs[0]);
-				int userID = Integer.parseInt(v2[0]);
+				String userID = v2[0];
 				double score = Float.parseFloat(v2[1]);
-				
 				k1.set(userID);
 				for(Coocurence co : coocurenceMatrix.get(itemID))
 				{
@@ -81,12 +82,12 @@ public class Step4 {
 		}
 	}
 	
-	public static class Step4_Reduce extends Reducer<LongWritable, Text, LongWritable,Text>{
+	public static class Step4_Reduce extends Reducer<Text, Text, Text,Text>{
 
 		private static Text value2 = new Text();
 		
 		@Override
-		protected void reduce(LongWritable key, Iterable<Text> values,Context  context)	throws IOException, InterruptedException {
+		protected void reduce(Text key, Iterable<Text> values,Context  context)	throws IOException, InterruptedException {
 			// TODO Auto-generated method stub
 			Map<String,Double> result  = new HashMap<String, Double>();
 			for (Text text : values) {
@@ -123,27 +124,27 @@ public class Step4 {
 		job.setJarByClass(Step4.class);
 		
 		//设置文件路径
-				FileInputFormat.setInputPaths(job, new Path(input_1),new Path(input_2));
-				FileOutputFormat.setOutputPath(job, new Path(output));
+		FileInputFormat.setInputPaths(job, new Path(input_2),new Path(input_1));
+		FileOutputFormat.setOutputPath(job, new Path(output));
+
+		//设置Map和Reduce类
+		job.setMapperClass(Step4_Map.class);
+		job.setReducerClass(Step4_Reduce.class);
 			
-				//设置Map和Reduce类
-				job.setMapperClass(Step4_Map.class);
-				job.setReducerClass(Step4_Reduce.class);
-			
-				//设置map的输入输出格式
-				job.setMapOutputKeyClass(LongWritable.class);
-				job.setMapOutputValueClass(Text.class);
+		//设置map的输入输出格式
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(Text.class);
 				
-				//设置reduce的输入输出格式
-				job.setOutputKeyClass(LongWritable.class);
-				job.setOutputValueClass(Text.class);
+		//设置reduce的输入输出格式
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(Text.class);
 				
-				//设置文件
-				job.setInputFormatClass(TextInputFormat.class);
-				job.setOutputFormatClass(TextOutputFormat.class);
+		//设置文件
+		job.setInputFormatClass(TextInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
 				
-				//提交作业
-				job.waitForCompletion(true);
+		//提交作业
+		job.waitForCompletion(true);
 		}
 	}
 

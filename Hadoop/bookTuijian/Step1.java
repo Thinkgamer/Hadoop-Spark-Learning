@@ -42,9 +42,11 @@ public class Step1 {
 		@Override
 		protected void map(LongWritable key, Text value, Context context)throws IOException, InterruptedException {
 			// TODO Auto-generated method stub
-			String[] arr = value.toString().split(",");
+//			String[] arr = value.toString().split(",");
+			String[] arr = value.toString().split("\t");
 			k1.set(arr[0]);
-			v1.set(arr[1]+":"+arr[2]);
+			v1.set(arr[2]+":"+arr[1]);
+//			v1.set(arr[1]+":"+arr[2]);
 			context.write(k1, v1);
 		}
 		
