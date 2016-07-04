@@ -1,0 +1,102 @@
+scala:
+#创建pair RDD
+var lines = sc.parallelize(List("i love you"))
+val pairs = lines.map(x=>(x,1))
+pairs.foreach(println)
+
+=============================================================
+#针对一个pair RDD的转化操作
+#rdd.reduceByKey(func)：合并具有相同key的value值
+val rdd = sc.parallelize(List((1,2),(3,4),(3,6)))
+val rdd.reduceByKey((x,y)=>x+y)
+result.foreach(println)
+
+#rdd.groupByKey(func)：对具有相同键的进行分组
+val rdd = sc.parallelize(List((1,2),(3,4),(3,6)))
+val result = rdd.groupByKey()
+result.foreach(println)
+
+#rdd.mapValues(func)：对pairRDD中的每个值应用func 键不改变
+val rdd = sc.parallelize(List((1,2),(3,4),(3,6)))
+val result = rdd.mapValues(x=>x+1)
+result.foreach(println)
+
+#rdd.flatMapValues(func):类似于mapValues，返回的是迭代器函数
+val rdd = sc.parallelize(List((1,2),(3,4),(3,6)))
+val result = rdd.flatMapValues(x=>(x to 5))
+result.foreach(println)
+
+#rdd.keys：返回一个仅包含键的RDD
+val rdd = sc.parallelize(List((1,2),(3,4),(3,6)))
+val result = rdd.keys
+result.foreach(println)
+
+#rdd.values：返回一个仅包含value的RDD
+val rdd = sc.parallelize(List((1,2),(3,4),(3,6)))
+val result = rdd.values
+result.foreach(println)
+
+#rdd.sortByKey()：返回一个根据键排序的RDD
+val rdd = sc.parallelize(List((1,2),(3,4),(3,6)))
+val result = rdd.sortByKey().collect()
+result
+
+===================================================================
+#针对两个pair RDD的转化操作
+#rdd.subtractByKey( other )：删除掉RDD中与other RDD中键相同的元素
+val rdd = sc.parallelize(List((1,2),(3,4),(3,6)))
+val other = sc.parallelize(List((3,9)))
+val result = rdd.subtractByKey(other)
+result.foreach(println)
+
+#rdd.join( other )：对两个RDD进行内连接
+val result = rdd.join(other)
+result.foreach(println)
+
+#rdd.rightOuterJoin(other),对两个RDD进行连接操作，确保第一个RDD的键必须存在（右外连接）
+val result = rdd.rightOuterJoin(other)
+result.foreach(println)
+
+#rdd.leftOuterJoin(other)：对两个RDD进行连接操作，确保第一个RDD的键必须存在（左外连接）
+val result = rdd.leftOuterJoin(other)
+result.foreach(println)
+
+#rdd.cogroup(other),将有两个rdd中拥有相同键的数据分组
+val result = rdd.cogroup(other)
+result.foreach(println)
+
+
+
+#聚合操作
+#使用reduceByKey()和mapValues()计算每个键对应的平均值
+val rdd = sc.parallelize(List(Tuple2("panda",0),Tuple2("pink",3),Tuple2("pirate",3),Tuple2("panda",1),Tuple2("pink",4)))
+val result = rdd.mapValues(x=>(x,1)).reduceByKey((x,y)=>(x._1+y._1,x._2+y._2))
+result.foreach(println)
+
+#实现经典的分布式单词计数问题（使用flatMap() 来生成以单词为键，以数字1为值的pair RDD）
+val rdd = sc.parallelize(List("i am thinkgamer, i love cyan"))
+val words = rdd.flatMap(line => line.split(" "))
+val result = words.map(x=>(x,1)).reduceByKey((x,y) => x+y)
+result.foreach(println)
+
+#实现经典的分布式单词计数问题（使用countByValue更快的实现单词计数）
+val rdd = sc.parallelize(List("i am thinkgamer, i love cyan"))
+val result = rdd.flatMap(x=>x.split(" ")).countByValue()
+result.foreach(println)
+
+#combineByKey()是最为常用的基于键进行聚合的函数，大多数基于键聚合的函数都是用它实现的，和aggregate()一样，combineByKey()可以让用户返回与输入数据类型不同的返回值
+
+val data = Seq(("a",3),("b",4),("c",5))
+sc.parallelize(data).reduceByKey((x,y)=>x+y) //默认并行度
+sc.parallelize(data).reduceByKey((x,y)=>x+y,10) //自定义并行度
+
+#获取RDD的分区方式
+val pairs = sc.parallelize(List((1,1),(2,2),(3,3)))
+scala> pairs.partitioner
+res4: Option[org.apache.spark.Partitioner] = None
+scala> val partitioned = pairs.partitionBy(new org.apache.spark.HashPartitioner(2))
+partitioned: org.apache.spark.rdd.RDD[(Int, Int)] = ShuffledRDD[10] at partitionBy at <console>:29
+
+scala> partitioned.partitioner
+res5: Option[org.apache.spark.Partitioner] = Some(org.apache.spark.HashPartitioner@2)
+
