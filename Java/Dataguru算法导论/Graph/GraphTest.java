@@ -91,7 +91,8 @@ public class GraphTest {
 		//添加处理节点的操作
 		for(i = 0; i< g.VertxNum; i++)
 		{
-			if(g.EdgeWeight[n][i] != g.MaxValue && g.isTrav[n] == 0)
+			//if(g.EdgeWeight[n][i] != g.MaxValue && g.isTrav[n] == 0)  纠错为 下边一行，感谢网友http://blog.csdn.net/ZyManTou 提示
+            if(g.EdgeWeight[n][i] != g.MaxValue && g.isTrav[i] == 0)
 			{
 				DeepTraOne(g, i);     //递归进行遍历
 			}
