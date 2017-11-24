@@ -15,6 +15,8 @@
 
 6:Java 目录<br><br>
 
+7:cluster_conf 目录<br>
+> 集群的配置文件备份
 
 Email：Thinkagmer_gyt@gmail.com<br>
 QQ：1923361654<br>
