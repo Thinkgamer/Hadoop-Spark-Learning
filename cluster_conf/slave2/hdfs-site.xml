@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <!--
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,15 +18,15 @@
 
 <configuration>
 <property>  
-    <name>mapreduce.framework.name</name>  
-    <value>yarn</value>  
+    <name>dfs.replication</name>  
+    <value>2</value>  
   </property>  
   <property>  
-    <name>mapreduce.jobhistory.address</name>  
-    <value>master1:10020</value>  
+    <name>dfs.namenode.name.dir</name>  
+    <value>file:/home/node1/bigdata/hadoop-2.7.3/dfs/name</value>  
   </property>  
   <property>  
-    <name>mapreduce.jobhistory.webapp.address</name>  
-    <value>master1:19888</value>  
+    <name>dfs.datanode.data.dir</name>  
+    <value>file:/home/node1/bigdata/hadoop-2.7.3/dfs/data</value>  
   </property>  
 </configuration>

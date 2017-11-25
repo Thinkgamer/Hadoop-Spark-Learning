@@ -1,9 +1,11 @@
 # 集群说明：
-两个节点：分别为master1和slave1（由于电脑资源有限）
+三个节点：分别为master1和slave1，slave2（由于电脑资源有限）
 
 master1 文件夹中为主节点的配置文件
 
 slave1 文件夹中为从节点的配置文件（如果有多个从节点，可复制）
+
+slave2 文件夹中为从节点2的配置文件
 
 # hosts文件修改说明
 
@@ -12,6 +14,7 @@ slave1 文件夹中为从节点的配置文件（如果有多个从节点，可�
 ```
 master1IP master1
 slave1IP slave1
+slave2IP slave2
 ```
 
 # java options问题

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <!--
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,17 +16,13 @@
 
 <!-- Put site-specific property overrides in this file. -->
 
-<configuration>
-<property>  
-    <name>mapreduce.framework.name</name>  
-    <value>yarn</value>  
+<configuration>  
+  <property>  
+    <name>fs.default.name</name>  
+    <value>hdfs://master1:9000</value>  
   </property>  
   <property>  
-    <name>mapreduce.jobhistory.address</name>  
-    <value>master1:10020</value>  
+    <name>hadoop.tmp.dir</name>  
+    <value>/home/node1/bigdata/hadoop-2.7.3/tmp</value>  
   </property>  
-  <property>  
-    <name>mapreduce.jobhistory.webapp.address</name>  
-    <value>master1:19888</value>  
-  </property>  
-</configuration>
+</configuration> 
